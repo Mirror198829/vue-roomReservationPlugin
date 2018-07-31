@@ -181,7 +181,7 @@ export default {
 @gridW:(@topRightW - @barGridH - @barGridH) / 24;
 @gridH:@gridW;
 @baseBorder:1px solid @baseColor;
-#roomRerservation{width:@sumW;border:1px solid @baseColor;margin:30px auto}
+#roomRerservation{width:@sumW;border:1px solid @baseColor;background-color:#fff;min-width:@sumW;}
 .roomTop{width:100%;height:70px;display:flex;}
 .roomTopSide{width:@roomTopSideW;border:@baseBorder;box-sizing:border-box;position:relative;
   &:before{content:"";

@@ -15,6 +15,7 @@ export default {
 .clearfix{ zoom:1;}
 .clearfix:after{ content:''; display:block; clear:both;}
 html,body,#app{height:100%;}
+body{}
 ul,li{list-style: none;}
 a{text-decoration: none;}
 </style>

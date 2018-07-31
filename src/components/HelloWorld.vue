@@ -1,5 +1,5 @@
 <template>
-  <div class="hello">
+  <div class="resRoomWrap">
     <room-rerservation></room-rerservation>
   </div>
 </template>
@@ -21,5 +21,5 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
+.resRoomWrap{display: flex;justify-content: center;box-sizing: border-box;padding-top:30px;}
 </style>
