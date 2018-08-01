@@ -195,9 +195,9 @@ export default {
     },
     //获取markLine的位置信息
     getMarkLinePostion(startSelectIndex,endSelectIndex){
-      let gridW = $('.roomGrid').width()
-      this.markLine.leftLine = -1 + startSelectIndex * (gridW+2)
-      this.markLine.rightLine = -1 + (endSelectIndex + 1) * (gridW+2)
+      let gridW = $('.roomGrid').outerWidth()
+      this.markLine.leftLine = -1 + startSelectIndex * (gridW)
+      this.markLine.rightLine = -1 + (endSelectIndex + 1) * (gridW)
       this.markLine.isShow = true
     },
     //隐藏markLine
@@ -318,8 +318,6 @@ export default {
   .roomGridWrap{box-sizing:border-box;overflow:hidden;width:@sumW - @barGridH - 145px;
     .roomGridLst{white-space: nowrap;position:relative;left:0;transition:all 0.3s;position:relative;
       .markLeftLine,.markRightLine{width:2px;height:100%;background-color:red;position:absolute;z-index:10;}
-      // .markLeftLine{left:-1px + 47*@gridW;}
-      // .markRightLine{left:-1px + 22*@gridW}
       .roomGrid{display:inline-block;width:@gridW;height:@gridH;box-sizing:border-box;border:@baseBorder;}
       .roomGrid.isOccupy{background-color:@disabledColor;cursor: not-allowed;}
       .roomGrid.isSelect{background-color:@themeColor;}
