@@ -1,6 +1,6 @@
 <!-- 
 - Author:CaoJing
-- Date:2018/7/30
+- Date:2018/8/1
 - github:https://github.com/Mirror198829
 -->
 <template>
@@ -31,6 +31,8 @@
           <h3 class="roomName">{{item.name}}</h3>
           <div class="roomGridWrap">
             <ul class="roomGridLst"  :class="{'pmHour':isPmHour}">
+              <div v-if="markLine.isShow" class="markLeftLine" :style="{'left':markLine.leftLine+'px'}"></div>
+              <div v-if="markLine.isShow" class="markRightLine" :style="{'left':markLine.rightLine+'px'}"></div>
               <li class="roomGrid" 
                   v-for="(grid,index) in item.gridLst" 
                   :class="{'isOccupy':grid.status == 1,'isSelect':grid.status == 2}"
@@ -61,6 +63,11 @@ export default {
       initGrid:{
         startIndex:null,
         endIndex:null
+      },
+      markLine:{
+        isShow:false,
+        leftLine:0,
+        rightLine:0
       }
     }
   },
@@ -77,9 +84,17 @@ export default {
       if(!isMoving) return false
       if(triggerIndex != key) return false   //如果不是同一行没有滑动状态
       if(gridStatus == 1){
+        curGrid.startSelectIndex = null
+        curGrid.endSelectIndex = null
+        curGrid.gridLst.forEach((grid,index) => {
+          if(grid.status == 2) grid.status = 0
+        })
+        alert('此时间段已经被占用，请重新选择')
+        this.hideMarkLine()
+        this.initState()
         return false
       }else{
-        if(index < initStartIndex) {
+        if(index <= initStartIndex) {
           curStartIndex = index
           curEndIndex = initEndIndex
         }else if(index >= initEndIndex){
@@ -96,7 +111,8 @@ export default {
 
       for(let i = curStartIndex; i <= curEndIndex; i++){
         this.roomLst[key].gridLst[i].status = 2
-      }  
+      }
+      this.getMarkLinePostion(curStartIndex,curEndIndex) //获取markLine的信息 
     },
     mouseDownGrid(key,index){ 
       let curGrid = this.roomLst[key]      
@@ -113,6 +129,7 @@ export default {
           startSelectIndex = null
           endSelectIndex = null
           this.roomLst[key].gridLst[index].status = 0
+          this.hideMarkLine()  //隐藏markLine
         }else if( index == startSelectIndex){
           startSelectIndex = index + 1  
           this.roomLst[key].gridLst[index].status = 0
@@ -145,13 +162,20 @@ export default {
               if(grid.status == 2) grid.status = 0
             })
             alert('选择时间段中间有被占用时间，请重新选择')
+            this.hideMarkLine()
+            this.initState()
             break;  
-           }
+           }                   
           this.roomLst[key].gridLst[i].status = 2
+          this.getMarkLinePostion(startSelectIndex,endSelectIndex) //获取markLine的信息
         } 
       } 
     },
     mouseUpGrid(key,index){
+      this.initState() //初始化所有信息
+    },
+    //初始化相关信息
+    initState(){
       this.isMoving = false   //关闭滑动状态
       this.triggerIndex = null //恢复初始值
       this.initGrid.startIndex = null
@@ -168,6 +192,17 @@ export default {
           })
         }
       })
+    },
+    //获取markLine的位置信息
+    getMarkLinePostion(startSelectIndex,endSelectIndex){
+      let gridW = $('.roomGrid').width()
+      this.markLine.leftLine = -1 + startSelectIndex * (gridW+2)
+      this.markLine.rightLine = -1 + (endSelectIndex + 1) * (gridW+2)
+      this.markLine.isShow = true
+    },
+    //隐藏markLine
+    hideMarkLine(){
+      this.markLine.isShow = false
     },
     getRoomLst(){
       this.roomLst = getRoomLst().roomLst 
@@ -216,6 +251,7 @@ export default {
         item.active = false
       })
       this.dateLst[key].active = true
+      this.hideMarkLine()
       this.getRoomLst()
     }
   },
@@ -228,7 +264,7 @@ export default {
 </script>
 
 <style  scoped lang="less">
-@baseColor:#00343f;//基础色，比如border
+@baseColor:#999;//基础色，比如border
 @disabledColor:#c8c9cc; //not-allowd颜色
 @themeColor:#37c6c0;//主题颜色
 @themeColor2:#1db0b8;//日期选中颜色
@@ -240,6 +276,7 @@ export default {
 @gridW:(@topRightW - @barGridH - @barGridH) / 24;
 @gridH:@gridW;
 @baseBorder:1px solid @baseColor;
+@fontColor:rgb(52, 73, 94);
 *{user-select:none}
 #roomRerservation{width:@sumW;border:1px solid @baseColor;background-color:#fff;min-width:@sumW;}
 .roomTop{width:100%;height:70px;display:flex;}
@@ -255,13 +292,13 @@ export default {
   transform-origin:center center;
   transform:rotateZ(30deg) scale(1.18);
   }
-  .titleTime,.titleName{position:absolute;font-size:14px;}
+  .titleTime,.titleName{position:absolute;font-size:14px;color:@fontColor;}
   .titleTime{top:13px;right:20px;}
   .titleName{bottom:15px;left:20px}
 }
 .roomTopTime{flex:1;}
 .roomDate{height:calc(100% - @barGridH);display: flex;background-color:#fff;
-  .dateItem{flex:1;font-size:14px;text-align: center;box-sizing: border-box;border:@baseBorder;height:100%;display:flex;align-items: center;justify-content: center;cursor: pointer;}
+  .dateItem{flex:1;font-size:14px;text-align: center;box-sizing: border-box;border:@baseBorder;height:100%;display:flex;align-items: center;justify-content: center;cursor: pointer;color:@fontColor;}
   .dateItem.active{background-color:@themeColor2;color:#fff}
 }
 .arrowHourWrap{width:100%;display:flex;height:@barGridH;
@@ -269,17 +306,20 @@ export default {
   .arrow.disabled{color:@disabledColor;cursor:not-allowed;}
   .roomTopHour{box-sizing:border-box;width:calc(@topRightW - @barGridH - @barGridH);overflow: hidden;
     .hourNavLst{white-space: nowrap;position:relative;left:0;transition:all 0.3s;
-      .hourNavItem{display:inline-block;width:calc(100% / 12);height:@barGridH;line-height:@barGridH;text-align:center;box-sizing:border-box;border:@baseBorder;font-size:14px;background-color:@hourColor;}
+      .hourNavItem{display:inline-block;width:calc(100% / 12);height:@barGridH;line-height:@barGridH;text-align:center;box-sizing:border-box;border:@baseBorder;font-size:13px;background-color:@hourColor;color:@fontColor;}
     } 
     .hourNavLst.pmHour{left:-(@topRightW - 2*@barGridH);}
   }
 }
-.roomMain{height:10*@gridH;display:flex;width:100%;}
+.roomMain{height:10*@gridH;display:flex;width:100%;overflow:hidden;}
 .roomLst{}
 .roomItem{height:@gridH;box-sizing:border-box;border-right: none;display:flex;
-  .roomName{width:@roomTopSideW + @barGridH;box-sizing: border-box;text-align:center;font-size:14px;height:@gridH;line-height:@gridH;font-weight: 400;border:@baseBorder;user-select:none;}
+  .roomName{width:@roomTopSideW + @barGridH;box-sizing: border-box;text-align:center;font-size:14px;height:@gridH;line-height:@gridH;font-weight: 400;border:@baseBorder;user-select:none;color:@fontColor;}
   .roomGridWrap{box-sizing:border-box;overflow:hidden;width:@sumW - @barGridH - 145px;
-    .roomGridLst{white-space: nowrap;position:relative;left:0;transition:all 0.3s;
+    .roomGridLst{white-space: nowrap;position:relative;left:0;transition:all 0.3s;position:relative;
+      .markLeftLine,.markRightLine{width:2px;height:100%;background-color:red;position:absolute;z-index:10;}
+      // .markLeftLine{left:-1px + 47*@gridW;}
+      // .markRightLine{left:-1px + 22*@gridW}
       .roomGrid{display:inline-block;width:@gridW;height:@gridH;box-sizing:border-box;border:@baseBorder;}
       .roomGrid.isOccupy{background-color:@disabledColor;cursor: not-allowed;}
       .roomGrid.isSelect{background-color:@themeColor;}
