@@ -264,11 +264,12 @@ export default {
 </script>
 
 <style  scoped lang="less">
-@baseColor:#999;//基础色，比如border
+@baseColor:#326765;//基础色，比如border
 @disabledColor:#c8c9cc; //not-allowd颜色
-@themeColor:#37c6c0;//主题颜色
-@themeColor2:#1db0b8;//日期选中颜色
-@hourColor:#D0e9ff;//时间滚条颜色
+@themeColor:#7da87b;//主题颜色
+@themeColor2:#326765;//日期选中颜色
+@hourColor:#f5f5c6;//时间滚条颜色
+@markLineColor:#f95959;//markline颜色
 @barGridH:25px;
 @roomTopSideW:120px;
 @sumW:800px;
@@ -317,7 +318,7 @@ export default {
   .roomName{width:@roomTopSideW + @barGridH;box-sizing: border-box;text-align:center;font-size:14px;height:@gridH;line-height:@gridH;font-weight: 400;border:@baseBorder;user-select:none;color:@fontColor;}
   .roomGridWrap{box-sizing:border-box;overflow:hidden;width:@sumW - @barGridH - 145px;
     .roomGridLst{white-space: nowrap;position:relative;left:0;transition:all 0.3s;position:relative;
-      .markLeftLine,.markRightLine{width:2px;height:100%;background-color:red;position:absolute;z-index:10;}
+      .markLeftLine,.markRightLine{width:2px;height:100%;background-color:@markLineColor;position:absolute;z-index:10;}
       .roomGrid{display:inline-block;width:@gridW;height:@gridH;box-sizing:border-box;border:@baseBorder;}
       .roomGrid.isOccupy{background-color:@disabledColor;cursor: not-allowed;}
       .roomGrid.isSelect{background-color:@themeColor;}
