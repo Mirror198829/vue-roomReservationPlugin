@@ -36,6 +36,7 @@
                   :class="{'isOccupy':grid.status == 1,'isSelect':grid.status == 2}"
                   @mousedown="mouseDownGrid(key,index)"
                   @mouseup = 'mouseUpGrid(key,index)'
+                  @mouseover = 'mouseOverGrid(key,index)'
               ></li>
             </ul>
           </div>
@@ -54,15 +55,57 @@ export default {
     return {
       isPmHour:false,
       dateLst:[],
-      roomLst:[]
+      roomLst:[],
+      isMoving:false,   //滑动状态
+      triggerIndex:null, //点击的行数
+      initGrid:{
+        startIndex:null,
+        endIndex:null
+      }
     }
   },
   methods:{
-    mouseDownGrid(key,index){ 
+    mouseOverGrid(key,index){
       let curGrid = this.roomLst[key]  
+      let initStartIndex = this.initGrid.startIndex   //第一次点击的grid信息
+      let initEndIndex =  this.initGrid.endIndex
+      let gridStatus = curGrid.gridLst[index].status
+      let curStartIndex = curGrid.startSelectIndex 
+      let curEndIndex = curGrid.endSelectIndex 
+      let isMoving = this.isMoving
+      let triggerIndex = this.triggerIndex
+      if(!isMoving) return false
+      if(triggerIndex != key) return false   //如果不是同一行没有滑动状态
+      if(gridStatus == 1){
+        return false
+      }else{
+        if(index < initStartIndex) {
+          curStartIndex = index
+          curEndIndex = initEndIndex
+        }else if(index >= initEndIndex){
+          curEndIndex = index
+          curStartIndex = initStartIndex
+        }
+      }
+      //清除所有状态
+      this.roomLst[key].gridLst.forEach((grid,index)=>{
+        if(grid.status == 2) grid.status = 0
+      })
+      this.roomLst[key].startSelectIndex = curStartIndex
+      this.roomLst[key].endSelectIndex = curEndIndex
+
+      for(let i = curStartIndex; i <= curEndIndex; i++){
+        this.roomLst[key].gridLst[i].status = 2
+      }  
+    },
+    mouseDownGrid(key,index){ 
+      let curGrid = this.roomLst[key]      
       let startSelectIndex = curGrid.startSelectIndex
       let endSelectIndex =  curGrid.endSelectIndex
       let gridStatus = curGrid.gridLst[index].status
+      this.removeOtherLineCss(key) //只能选择一行的样式，清除其他行的样式
+      this.isMoving = true //启动滑动状态
+      this.triggerIndex = key //保存当前触发行
       if(gridStatus == 1){
         return false //如果是占用状态，不可点击
       }else if(gridStatus == 2){   //如果是已选择状态
@@ -80,7 +123,6 @@ export default {
           return false
         }
       }else{ 
-
           if(startSelectIndex == null){
             startSelectIndex = index
             endSelectIndex = index                        
@@ -92,6 +134,8 @@ export default {
       }
       this.roomLst[key].startSelectIndex = startSelectIndex
       this.roomLst[key].endSelectIndex = endSelectIndex
+      this.initGrid.startIndex = startSelectIndex //用于全局保存当前grid的index信息
+      this.initGrid.endIndex = endSelectIndex
       if(startSelectIndex!=null){
         for(let i = startSelectIndex; i <= endSelectIndex; i++){
           if(this.roomLst[key].gridLst[i].status == 1){
@@ -108,7 +152,22 @@ export default {
       } 
     },
     mouseUpGrid(key,index){
-
+      this.isMoving = false   //关闭滑动状态
+      this.triggerIndex = null //恢复初始值
+      this.initGrid.startIndex = null
+      this.initGrid.endIndex = null
+    },
+    //单行选择，清除其他行样式
+    removeOtherLineCss(index){
+      this.roomLst.forEach((item,key)=>{
+        if(key != index){
+          item.startSelectIndex = null
+          item.endSelectIndex = null
+          item.gridLst.forEach((grid,key) => {
+            if(grid.status == 2) grid.status = 0
+          })
+        }
+      })
     },
     getRoomLst(){
       this.roomLst = getRoomLst().roomLst 
@@ -181,6 +240,7 @@ export default {
 @gridW:(@topRightW - @barGridH - @barGridH) / 24;
 @gridH:@gridW;
 @baseBorder:1px solid @baseColor;
+*{user-select:none}
 #roomRerservation{width:@sumW;border:1px solid @baseColor;background-color:#fff;min-width:@sumW;}
 .roomTop{width:100%;height:70px;display:flex;}
 .roomTopSide{width:@roomTopSideW;border:@baseBorder;box-sizing:border-box;position:relative;
@@ -217,7 +277,7 @@ export default {
 .roomMain{height:10*@gridH;display:flex;width:100%;}
 .roomLst{}
 .roomItem{height:@gridH;box-sizing:border-box;border-right: none;display:flex;
-  .roomName{width:@roomTopSideW + @barGridH;box-sizing: border-box;text-align:center;font-size:14px;height:@gridH;line-height:@gridH;font-weight: 400;border:@baseBorder;}
+  .roomName{width:@roomTopSideW + @barGridH;box-sizing: border-box;text-align:center;font-size:14px;height:@gridH;line-height:@gridH;font-weight: 400;border:@baseBorder;user-select:none;}
   .roomGridWrap{box-sizing:border-box;overflow:hidden;width:@sumW - @barGridH - 145px;
     .roomGridLst{white-space: nowrap;position:relative;left:0;transition:all 0.3s;
       .roomGrid{display:inline-block;width:@gridW;height:@gridH;box-sizing:border-box;border:@baseBorder;}
