@@ -1,54 +1,97 @@
 <!-- 
 - Author:CaoJing
-- Date:2018/8/1
+- Date:2018/8/2
 - github:https://github.com/Mirror198829
 -->
 <template>
-  <div id="roomRerservation">
-    <div class="roomTop">
-      <div class="roomTopSide">
-        <span class="titleTime">时间</span>
-        <span class="titleName">名称</span>
+<div id="roomReserveMain">
+  <div class="conditionBox">
+     <li class="conditionItem">
+       <h3 class="conditionTitle">区域选择：</h3>
+       <ul class="regionLst">
+         <li class="region" v-for="(item,key) in regionLst" :class="{'active':item.status}" @click="selectRegionCondition(key)">{{item.name}}</li>
+       </ul>
+     </li>
+     <li class="conditionItem">
+       <h3 class="conditionTitle">会议设施：</h3>
+       <ul class="facility">
+           <el-checkbox-group v-model="facilityList" @change="getRoomLst()">
+            <el-checkbox label="视频"></el-checkbox>
+            <el-checkbox label="投影"></el-checkbox>
+            <el-checkbox label="白板"></el-checkbox>
+            <el-checkbox label="麦克"></el-checkbox>
+            <el-checkbox label="电视"></el-checkbox>
+          </el-checkbox-group>
+       </ul>
+     </li>
+  </div>
+  <div id="resRoomPluginBox">
+    <div class="resHead">
+      <h2 class="resHeadRegionName">【南京】 会议室（ {{regionName}} ）</h2>
+      <div class="identifyLst">
+        <li class="identify" v-for="(item,key) in identifyLst">
+          <i :class="{'nooccupy':key ==1,'select':key == 2}"></i><span>{{item}}</span>
+        </li>
       </div>
-      <div class="roomTopTime">
-        <ul class="roomDate">
-          <li class="dateItem" v-for="(date,key) in dateLst" :class="{'active':date.active}" @click="changeDate(key)"><span>{{date.date}}</span></li>
-        </ul>
-        <div class="arrowHourWrap">
-          <i class="arrow arrowLeft fa fa-caret-left" :class="{'disabled': moveStep == 1}"  @click = "moveHour(true)"></i>
-          <div class="roomTopHour">
-            <ul class="hourNavLst" :class="{'stepOne':moveStep == 1,'stepTwo':moveStep == 2,'stepThree':moveStep == 3,'stepFour':moveStep == 4}">
-              <li class="hourNavItem" v-for="(item,index) in 24">{{index}}:00</li>
-            </ul>
+    </div>
+    <div id="roomRerservation">
+      <div class="roomTop">
+        <div class="roomTopSide">
+          <span class="titleTime">时间</span>
+          <span class="titleName">名称</span>
+        </div>
+        <div class="roomTopTime">
+          <ul class="roomDate">
+            <li class="dateItem" v-for="(date,key) in dateLst" :class="{'active':date.active}" @click="changeDate(key)"><span>{{date.week}}<br/>{{date.date}}</span></li>
+          </ul>
+          <div class="arrowHourWrap">
+            <i class="arrow arrowLeft fa fa-caret-left" :class="{'disabled': moveStep == 1}"  @click = "moveHour(true)"></i>
+            <div class="roomTopHour">
+              <ul class="hourNavLst" :class="{'stepOne':moveStep == 1,'stepTwo':moveStep == 2,'stepThree':moveStep == 3,'stepFour':moveStep == 4}">
+                <li class="hourNavItem" v-for="(item,index) in 24">{{index}}:00</li>
+              </ul>
+            </div>
+            <i class="arrow arrowRight  fa fa-caret-right" :class="{'disabled': moveStep == 4}" @click = "moveHour(false)"></i>
           </div>
-          <i class="arrow arrowRight  fa fa-caret-right" :class="{'disabled': moveStep == 4}" @click = "moveHour(false)"></i>
         </div>
       </div>
-    </div>
-    <div class="roomMain">
-      <ul class="roomLst">
-        <li class="roomItem"  v-for="(item,key) in roomLst">
-          <h3 class="roomName">{{item.name}}</h3>
-          <div class="roomGridWrap">
-            <ul class="roomGridLst"  
-            :class="{'stepOne':moveStep == 1,'stepTwo':moveStep == 2,'stepThree':moveStep == 3,'stepFour':moveStep == 4}"
-            >
-              <div v-if="markLine.isShow" class="markLeftLine" :style="{'left':markLine.leftLine+'px'}"></div>
-              <div v-if="markLine.isShow" class="markRightLine" :style="{'left':markLine.rightLine+'px'}"></div>
-              <li class="roomGrid" 
-                  v-for="(grid,index) in item.gridLst" 
-                  :class="{'isOccupy':grid.status == 1,'isSelect':grid.status == 2}"
-                  @mousedown="mouseDownGrid(key,index)"
-                  @mouseup = 'mouseUpGrid(key,index)'
-                  @mouseover = 'mouseOverGrid(key,index)'
-              ></li>
-            </ul>
-          </div>
-        </li>
-      </ul>
-      <div class="noneBox"></div>
+      <div class="roomMain">
+        <ul class="roomLst">
+          <li class="roomItem"  v-for="(item,key) in roomLst">
+            <h3 class="roomName">{{item.name}}</h3>
+            <div class="roomGridWrap">
+              <ul class="roomGridLst"  
+              :class="{'stepOne':moveStep == 1,'stepTwo':moveStep == 2,'stepThree':moveStep == 3,'stepFour':moveStep == 4}"
+              >
+                <div v-if="markLine.isShow" class="markLeftLine" :style="{'left':markLine.leftLine+'px'}"></div>
+                <div v-if="markLine.isShow" class="markRightLine" :style="{'left':markLine.rightLine+'px'}"></div>
+                <li class="roomGrid" 
+                    v-for="(grid,index) in item.gridLst" 
+                    :class="{'isOccupy':grid.status == 1,'isSelect':grid.status == 2}"
+                    @mousedown="mouseDownGrid(key,index)"
+                    @mouseup = 'mouseUpGrid(key,index)'
+                    @mouseover = 'mouseOverGrid(key,index)'
+                ></li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+        <div class="noneBox"></div>
+      </div>
     </div>
   </div>
+  <div id="resRoomInfo">
+    <h1>会议室预订信息：</h1>
+    <ul>
+      <li class="resRoomInfoItem"><span class="resRoomInfoItemTitle">会议室名称：</span>集团总部楼会议中心</li>
+      <li class="resRoomInfoItem"><span class="resRoomInfoItemTitle">预 订 时 间：</span>2018/08/24（星期四） 11：30 —— 12：00</li>
+      <li class="resRoomInfoItem"><span class="resRoomInfoItemTitle">预订人姓名：</span>xxx</li>
+    </ul>
+  </div>
+  <div style="text-align:center;">
+    <el-button type="primary">确定预订</el-button>
+  </div>
+</div>
 </template>
 
 <script>
@@ -57,9 +100,12 @@ export default {
   name: 'roomRerservation',
   data () {
     return {
-      isPmHour:false,
+      facilityList:[],//设施列表
+      regionLst:[{name:'全部',status:true},{name:'集团总部楼会议中心',status:false},{name:'易购楼会议中心',status:false},{name:'研发二区会议中心',status:false},{name:'集团总部楼',status:false},{name:'易购楼',status:false},{name:'研发二区-B1栋',status:false},{name:'研发二区-B2栋',status:false},{name:'研发二区-C1栋',status:false},{name:'研发二区-C2栋',status:false},{name:'雨花基地',status:false},{name:'金融城',status:false},{name:'高尔夫俱乐部',status:false}],//区域列表
+      regionName:null,
       dateLst:[],
       roomLst:[],
+      identifyLst:['被占用','空闲','选择中'],
       isMoving:false,   //滑动状态
       triggerIndex:null, //点击的行数
       moveStep:3,
@@ -75,6 +121,22 @@ export default {
     }
   },
   methods:{
+    //根据地域删选会议室信息
+    selectRegionCondition(key){
+      this.regionLst.forEach((item,key) => {
+        item.status = false
+      })
+      this.regionLst[key].status = true
+      this.getRoomLst()
+      this.getRegionName()
+      this.moveStep = 3
+    },
+    //根据地域的激活状态获插件的地域名称
+    getRegionName(){
+      this.regionLst.forEach((item,key) => {
+        if(item.status) this.regionName = item.name
+      })
+    },
     mouseOverGrid(key,index){ 
       let isMoving = this.isMoving     
       if(!isMoving) return false
@@ -91,7 +153,10 @@ export default {
         curGrid.gridLst.forEach((grid,index) => {
           if(grid.status == 2) grid.status = 0
         })
-        alert('此时间段已经被占用，请重新选择')
+        this.$message({
+          message: '选择时间段中有被占用，请重新选择！',
+          type: 'warning'
+        })
         this.hideMarkLine()
         this.initState()
         return false
@@ -125,6 +190,11 @@ export default {
       this.isMoving = true //启动滑动状态
       this.triggerIndex = key //保存当前触发行
       if(gridStatus == 1){
+        this.hideMarkLine()  //隐藏markLine
+        this.$message({
+          message: '时间已占用，请重新选择！',
+          type: 'warning'
+        })
         return false //如果是占用状态，不可点击
       }else if(gridStatus == 2){   //如果是已选择状态
         if(index ==  startSelectIndex && index == endSelectIndex){   //一行已选择的只有一个格子
@@ -163,7 +233,10 @@ export default {
             curGrid.gridLst.forEach((grid,index) => {
               if(grid.status == 2) grid.status = 0
             })
-            alert('选择时间段中间有被占用时间，请重新选择')
+            this.$message({
+              message: '选择时间段中有被占用，请重新选择！',
+              type: 'warning'
+            })
             this.hideMarkLine()
             this.initState()
             break;  
@@ -218,6 +291,7 @@ export default {
     getRoomLst(){
       this.roomLst = getRoomLst().roomLst 
       this.handleRoomLst() //对数据进行处理
+      this.hideMarkLine()
     },
     //修改会议室列表的数据格式
     handleRoomLst(){
@@ -251,8 +325,12 @@ export default {
       for(let i = 0; i < 7; i++){
         let active = false
         let date = this.$moment().add(i,'days').format('YYYY/MM/DD')
+        let weekLst = new Array("日", "一", "二", "三", "四", "五", "六")
+        let dateLocal = this.$moment().add(i,'days')
+        let week = '星期'+weekLst[dateLocal._d.getDay()]
         if(i == 0) active = true
         this.dateLst.push({
+          week,
           date,
           active
         })
@@ -268,8 +346,9 @@ export default {
     }
   },
   mounted(){
-    this.getRoomLst()
-    this.getDateLst()
+    this.getRoomLst() //获取会议室信息
+    this.getDateLst() //获取日期列表
+    this.getRegionName() //获取选中的地区名称
   },
   created(){}
 }
@@ -284,14 +363,48 @@ export default {
 @markLineColor:#f38181;//markline颜色
 @barGridH:25px;
 @roomTopSideW:120px;
-@sumW:800px;
+@sumW:900px;
 @topRightW:@sumW - @roomTopSideW;
 @gridW:(@topRightW - @barGridH - @barGridH) / 24;
 @gridH:@gridW;
 @baseBorder:1px solid @baseColor;
-@fontColor:rgb(52, 73, 94);
+@fontColor:#606266;
 *{user-select:none}
-#roomRerservation{width:@sumW;border:1px solid @baseColor;background-color:#fff;min-width:@sumW;}
+#roomReserveMain{width:@sumW;min-width:@sumW;margin:0 auto}
+// 删选条件样式
+.conditionBox{margin-top:25px;margin-bottom:40px;
+  .conditionItem{display:flex;
+    .conditionTitle{font-size:14px;padding:10px 0;width:90px;color:@fontColor;}
+    .facility{padding-top:10px;}
+    .regionLst{display:flex;flex-wrap:wrap;flex:1;
+      .region{font-size:14px;padding:10px 15px;cursor: pointer;color:@fontColor;
+        &:hover{color:@themeColor;}
+      }
+      .region.active{background-color:rgba(113,201,206,.2);border-radius: 6px;color:@themeColor;font-weight:700;}
+    }
+  }
+}
+//预订信息卡片
+#resRoomInfo{margin-top:30px;margin-bottom:30px;color:@fontColor;
+  h1{font-size:16px;margin-bottom:10px;}
+  .resRoomInfoItem{padding:5px 0;
+    .resRoomInfoItemTitle{margin-right: 10px;}
+  }
+}
+// 预订表格插件样式
+#resRoomPluginBox{width:100%;}
+.resHead{display:flex;
+  .resHeadRegionName{font-weight:400;color:@fontColor;font-size:14px;position:relative;top:10px;}
+  .identifyLst{display:flex;justify-content:flex-end;flex:1;
+    .identify{padding:8px 0;margin-left:10px;
+      i{display:inline-block;width:15px;height:15px;background-color:@disabledColor;position:relative;top:3px;box-sizing:border-box;}
+      i.nooccupy{background-color:#fff;border:1px solid @disabledColor;}
+      i.select{background-color:@themeColor;}
+      span{font-size:12px;margin-left:2px;color:@fontColor;}
+    }
+  }
+}
+#roomRerservation{width:100%;border:1px solid @baseColor;background-color:#fff;}
 .roomTop{width:100%;height:70px;display:flex;}
 .roomTopSide{width:@roomTopSideW;border:@baseBorder;box-sizing:border-box;position:relative;
   &:before{content:"";
@@ -311,7 +424,7 @@ export default {
 }
 .roomTopTime{flex:1;}
 .roomDate{height:calc(100% - @barGridH);display: flex;background-color:#fff;
-  .dateItem{flex:1;font-size:14px;text-align: center;box-sizing: border-box;border:@baseBorder;height:100%;display:flex;align-items: center;justify-content: center;cursor: pointer;color:@fontColor;}
+  .dateItem{flex:1;font-size:13px;text-align: center;box-sizing: border-box;border:@baseBorder;height:100%;display:flex;align-items: center;justify-content: center;cursor: pointer;color:@fontColor;}
   .dateItem.active{background-color:@themeColor2;color:#fff}
 }
 .arrowHourWrap{width:100%;display:flex;height:@barGridH;
