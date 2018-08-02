@@ -15,13 +15,13 @@
           <li class="dateItem" v-for="(date,key) in dateLst" :class="{'active':date.active}" @click="changeDate(key)"><span>{{date.date}}</span></li>
         </ul>
         <div class="arrowHourWrap">
-          <i class="arrow arrowLeft fa fa-caret-left" :class="{'disabled': isPmHour == false}"  @click = "isPmHour = false"></i>
+          <i class="arrow arrowLeft fa fa-caret-left" :class="{'disabled': moveStep == 1}"  @click = "moveHour(true)"></i>
           <div class="roomTopHour">
-            <ul class="hourNavLst" :class="{'pmHour':isPmHour}">
+            <ul class="hourNavLst" :class="{'stepOne':moveStep == 1,'stepTwo':moveStep == 2,'stepThree':moveStep == 3,'stepFour':moveStep == 4}">
               <li class="hourNavItem" v-for="(item,index) in 24">{{index}}:00</li>
             </ul>
           </div>
-          <i class="arrow arrowRight  fa fa-caret-right" :class="{'disabled': isPmHour == true}" @click = "isPmHour = true"></i>
+          <i class="arrow arrowRight  fa fa-caret-right" :class="{'disabled': moveStep == 4}" @click = "moveHour(false)"></i>
         </div>
       </div>
     </div>
@@ -30,7 +30,9 @@
         <li class="roomItem"  v-for="(item,key) in roomLst">
           <h3 class="roomName">{{item.name}}</h3>
           <div class="roomGridWrap">
-            <ul class="roomGridLst"  :class="{'pmHour':isPmHour}">
+            <ul class="roomGridLst"  
+            :class="{'stepOne':moveStep == 1,'stepTwo':moveStep == 2,'stepThree':moveStep == 3,'stepFour':moveStep == 4}"
+            >
               <div v-if="markLine.isShow" class="markLeftLine" :style="{'left':markLine.leftLine+'px'}"></div>
               <div v-if="markLine.isShow" class="markRightLine" :style="{'left':markLine.rightLine+'px'}"></div>
               <li class="roomGrid" 
@@ -60,6 +62,7 @@ export default {
       roomLst:[],
       isMoving:false,   //滑动状态
       triggerIndex:null, //点击的行数
+      moveStep:3,
       initGrid:{
         startIndex:null,
         endIndex:null
@@ -72,17 +75,16 @@ export default {
     }
   },
   methods:{
-    mouseOverGrid(key,index){
-      let curGrid = this.roomLst[key]  
+    mouseOverGrid(key,index){ 
+      let isMoving = this.isMoving     
+      if(!isMoving) return false
+      let triggerIndex = this.triggerIndex
+      let curGrid = this.roomLst[triggerIndex]     //使得其他行的移动也可触发mouseDown行的状态变化
       let initStartIndex = this.initGrid.startIndex   //第一次点击的grid信息
       let initEndIndex =  this.initGrid.endIndex
       let gridStatus = curGrid.gridLst[index].status
       let curStartIndex = curGrid.startSelectIndex 
       let curEndIndex = curGrid.endSelectIndex 
-      let isMoving = this.isMoving
-      let triggerIndex = this.triggerIndex
-      if(!isMoving) return false
-      if(triggerIndex != key) return false   //如果不是同一行没有滑动状态
       if(gridStatus == 1){
         curGrid.startSelectIndex = null
         curGrid.endSelectIndex = null
@@ -103,14 +105,14 @@ export default {
         }
       }
       //清除所有状态
-      this.roomLst[key].gridLst.forEach((grid,index)=>{
+      this.roomLst[triggerIndex].gridLst.forEach((grid,index)=>{
         if(grid.status == 2) grid.status = 0
       })
-      this.roomLst[key].startSelectIndex = curStartIndex
-      this.roomLst[key].endSelectIndex = curEndIndex
+      this.roomLst[triggerIndex].startSelectIndex = curStartIndex
+      this.roomLst[triggerIndex].endSelectIndex = curEndIndex
 
       for(let i = curStartIndex; i <= curEndIndex; i++){
-        this.roomLst[key].gridLst[i].status = 2
+        this.roomLst[triggerIndex].gridLst[i].status = 2
       }
       this.getMarkLinePostion(curStartIndex,curEndIndex) //获取markLine的信息 
     },
@@ -204,10 +206,20 @@ export default {
     hideMarkLine(){
       this.markLine.isShow = false
     },
+    //移动时间标尺
+    moveHour(isMoveLeft){
+      if(isMoveLeft){
+        if(this.moveStep>1) this.moveStep --
+      }else{
+        if(this.moveStep<4) this.moveStep ++
+      }
+    },
+    //获取会议室列表
     getRoomLst(){
       this.roomLst = getRoomLst().roomLst 
       this.handleRoomLst() //对数据进行处理
     },
+    //修改会议室列表的数据格式
     handleRoomLst(){
       this.roomLst.forEach((room,index) => {
         room.startSelectIndex = null
@@ -306,10 +318,13 @@ export default {
   .arrow{width:@barGridH;height:100%;box-sizing:border-box;border:@baseBorder;font-size:22px;text-align:center;position: relative;cursor:pointer;}
   .arrow.disabled{color:@disabledColor;cursor:not-allowed;}
   .roomTopHour{box-sizing:border-box;width:calc(@topRightW - @barGridH - @barGridH);overflow: hidden;
-    .hourNavLst{white-space: nowrap;position:relative;left:0;transition:all 0.3s;
+    .hourNavLst{white-space: nowrap;position:relative;transition:all 0.3s;
       .hourNavItem{display:inline-block;width:calc(100% / 12);height:@barGridH;line-height:@barGridH;text-align:center;box-sizing:border-box;border:@baseBorder;font-size:13px;background-color:@hourColor;color:@fontColor;}
     } 
-    .hourNavLst.pmHour{left:-(@topRightW - 2*@barGridH);}
+    .hourNavLst.stepFour{left:-(@topRightW - 2*@barGridH);}    
+    .hourNavLst.stepThree{left:-(@topRightW - 2*@barGridH)/24*16}
+    .hourNavLst.stepTwo{left:-(@topRightW - 2*@barGridH)/24*8}
+    .hourNavLst.stepOne{left:0}
   }
 }
 .roomMain{height:10*@gridH;display:flex;width:100%;overflow:hidden;}
@@ -317,13 +332,17 @@ export default {
 .roomItem{height:@gridH;box-sizing:border-box;border-right: none;display:flex;
   .roomName{width:@roomTopSideW + @barGridH;box-sizing: border-box;text-align:center;font-size:14px;height:@gridH;line-height:@gridH;font-weight: 400;border:@baseBorder;user-select:none;color:@fontColor;}
   .roomGridWrap{box-sizing:border-box;overflow:hidden;width:@sumW - @barGridH - 145px;
-    .roomGridLst{white-space: nowrap;position:relative;left:0;transition:all 0.3s;position:relative;
+    .roomGridLst{white-space: nowrap;position:relative;transition:all 0.3s;position:relative;
       .markLeftLine,.markRightLine{width:2px;height:100%;background-color:@markLineColor;position:absolute;z-index:10;}
       .roomGrid{display:inline-block;width:@gridW;height:@gridH;box-sizing:border-box;border:@baseBorder;}
       .roomGrid.isOccupy{background-color:@disabledColor;cursor: not-allowed;}
       .roomGrid.isSelect{background-color:@themeColor;}
     }
-    .roomGridLst.pmHour{left:-(@topRightW - 2*@barGridH);}
+    .roomGridLst.stepFour{left:-(@topRightW - 2*@barGridH);}   
+    .roomGridLst.stepThree{left:-(@topRightW - 2*@barGridH)/24*16}
+    .roomGridLst.stepTwo{left:-(@topRightW - 2*@barGridH)/24*8}
+    .roomGridLst.stepOne{left:0}
+
   }
 }
 .noneBox{width:@barGridH;border:@baseBorder;box-sizing:border-box}
