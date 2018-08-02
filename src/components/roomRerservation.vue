@@ -264,12 +264,12 @@ export default {
 </script>
 
 <style  scoped lang="less">
-@baseColor:#326765;//基础色，比如border
+@baseColor:#71c9ce;//基础色，比如border
 @disabledColor:#c8c9cc; //not-allowd颜色
-@themeColor:#7da87b;//主题颜色
-@themeColor2:#326765;//日期选中颜色
-@hourColor:#f5f5c6;//时间滚条颜色
-@markLineColor:#f95959;//markline颜色
+@themeColor:@baseColor;//主题颜色
+@themeColor2:@baseColor;//日期选中颜色
+@hourColor:#cbf1f5;//时间滚条颜色
+@markLineColor:#f38181;//markline颜色
 @barGridH:25px;
 @roomTopSideW:120px;
 @sumW:800px;
