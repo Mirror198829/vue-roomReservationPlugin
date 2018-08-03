@@ -1,6 +1,6 @@
 <!-- 
 - Author:CaoJing
-- Date:2018/8/2
+- Date:2018/8/3
 - github:https://github.com/Mirror198829
 -->
 <template>
@@ -58,7 +58,7 @@
       <div class="roomMain">
         <ul class="roomLst">
           <li class="roomItem"  v-for="(item,key) in roomLst">
-            <h3 class="roomName">{{item.name}}</h3>
+            <h3 class="roomName" :title="item.name">{{item.name}}</h3>
             <div class="roomGridWrap">
               <ul class="roomGridLst"  
               :class="{'stepOne':moveStep == 1,'stepTwo':moveStep == 2,'stepThree':moveStep == 3,'stepFour':moveStep == 4}"
@@ -68,8 +68,8 @@
                 <li class="roomGrid" 
                     v-for="(grid,index) in item.gridLst" 
                     :class="{'isOccupy':grid.status == 1,'isSelect':grid.status == 2}"
-                    @mousedown="mouseDownGrid(key,index)"
-                    @mouseup = 'mouseUpGrid(key,index)'
+                    @mousedown="mouseDownGrid(key,index,$event)"
+                    @mouseup = 'mouseUpGrid(key,index,$event)'
                     @mouseover = 'mouseOverGrid(key,index)'
                 ></li>
               </ul>
@@ -83,9 +83,28 @@
   <div id="resRoomInfo">
     <h1>会议室预订信息：</h1>
     <ul>
-      <li class="resRoomInfoItem"><span class="resRoomInfoItemTitle">会议室名称：</span>集团总部楼会议中心</li>
-      <li class="resRoomInfoItem"><span class="resRoomInfoItemTitle">预 订 时 间：</span>2018/08/24（星期四） 11：30 —— 12：00</li>
-      <li class="resRoomInfoItem"><span class="resRoomInfoItemTitle">预订人姓名：</span>xxx</li>
+      <li class="resRoomInfoItem">
+        <span class="resRoomInfoItemTitle">会议室区域：</span>
+        {{resRoomInfo.region}}
+      </li>
+      <li class="resRoomInfoItem">
+        <span class="resRoomInfoItemTitle">会议室名称：</span>
+        {{resRoomInfo.roomName}}
+      </li>
+      <li class="resRoomInfoItem">
+        <span class="resRoomInfoItemTitle">预 订 时 间：</span>
+        {{resRoomInfo.date}}
+        <span v-if="resRoomInfo.week">（</span>
+        {{resRoomInfo.week}}
+        <span v-if="resRoomInfo.week">）</span> 
+        {{resRoomInfo.startTime}}
+        <span v-if="resRoomInfo.startTime">——</span>
+        {{resRoomInfo.endTime}}
+      </li>
+      <li class="resRoomInfoItem">
+        <span class="resRoomInfoItemTitle">预订人姓名：</span>
+        {{resRoomInfo.user}}
+      </li>
     </ul>
   </div>
   <div style="text-align:center;">
@@ -96,6 +115,7 @@
 
 <script>
 import getRoomLst from '../mock/room.js'
+import getUserName from '../mock/getUserName.js'
 export default {
   name: 'roomRerservation',
   data () {
@@ -117,7 +137,17 @@ export default {
         isShow:false,
         leftLine:0,
         rightLine:0
-      }
+      },
+      resRoomInfo:{
+        region:null,
+        date:null,
+        week:null,
+        startTime:null,
+        endTime:null,
+        roomName:null,
+        user:null
+      },
+      userName:null
     }
   },
   methods:{
@@ -158,7 +188,8 @@ export default {
           type: 'warning'
         })
         this.hideMarkLine()
-        this.initState()
+        this.initResRoom()
+        this.initState() 
         return false
       }else{
         if(index <= initStartIndex) {
@@ -181,20 +212,23 @@ export default {
       }
       this.getMarkLinePostion(curStartIndex,curEndIndex) //获取markLine的信息 
     },
-    mouseDownGrid(key,index){ 
+    mouseDownGrid(key,index,event){
+      this.triggerIndex = key //保存当前触发行
+      if(event.button != 0) return false 
       let curGrid = this.roomLst[key]      
       let startSelectIndex = curGrid.startSelectIndex
       let endSelectIndex =  curGrid.endSelectIndex
-      let gridStatus = curGrid.gridLst[index].status
-      this.removeOtherLineCss(key) //只能选择一行的样式，清除其他行的样式
-      this.isMoving = true //启动滑动状态
-      this.triggerIndex = key //保存当前触发行
+      let gridStatus = curGrid.gridLst[index].status  
+      this.removeOtherLineCss(key) //清除所有选中样式
+      this.isMoving = true //启动滑动状态      
       if(gridStatus == 1){
         this.hideMarkLine()  //隐藏markLine
         this.$message({
           message: '时间已占用，请重新选择！',
           type: 'warning'
         })
+        this.initResRoom()
+        this.initState()
         return false //如果是占用状态，不可点击
       }else if(gridStatus == 2){   //如果是已选择状态
         if(index ==  startSelectIndex && index == endSelectIndex){   //一行已选择的只有一个格子
@@ -203,13 +237,13 @@ export default {
           this.roomLst[key].gridLst[index].status = 0
           this.hideMarkLine()  //隐藏markLine
         }else if( index == startSelectIndex){
+          this.isMoving = false
           startSelectIndex = index + 1  
           this.roomLst[key].gridLst[index].status = 0
         }else if(index == endSelectIndex){
+          this.isMoving = false
           endSelectIndex = index - 1
           this.roomLst[key].gridLst[index].status = 0
-        }else{
-          return false
         }
       }else{ 
           if(startSelectIndex == null){
@@ -238,6 +272,7 @@ export default {
               type: 'warning'
             })
             this.hideMarkLine()
+            this.initResRoom()
             this.initState()
             break;  
            }                   
@@ -246,26 +281,72 @@ export default {
         } 
       } 
     },
-    mouseUpGrid(key,index){
+    mouseUpGrid(key,index,event){
+      if(event.button != 0) return false      
+      this.getResRoomInfo()//获取会议室预订信息
       this.initState() //初始化所有信息
+     // this.triggerIndex = null //恢复初始值,屏蔽，当快速划过时会有小概率出现this.triggerIndex = null，导致this.roomLst[triggerIndex]无法获取正确的值
+    },
+    //获取会议室预订信息
+    getResRoomInfo(){
+      let triggerIndex = this.triggerIndex
+      if(triggerIndex == null) {
+        alert(1233243)
+        return false
+      }
+      let triggerRoom = this.roomLst[triggerIndex]
+      let startSelectIndex = triggerRoom.startSelectIndex
+      let endSelectIndex = triggerRoom.endSelectIndex
+      let roomName = triggerRoom.name
+      if(startSelectIndex!=null){
+        this.resRoomInfo.region = '【南京】（'+ this.regionName+'）'
+        this.resRoomInfo.roomName = roomName
+        this.resRoomInfo.startTime = this.getTimeFromIndex(startSelectIndex,0)
+        this.resRoomInfo.endTime = this.getTimeFromIndex(endSelectIndex,1)
+        this.resRoomInfo.user = this.userName
+        this.dateLst.forEach((item,key)=>{
+          if(item.active){
+            this.resRoomInfo.week = item.week
+            this.resRoomInfo.date = item.date
+          }
+        })
+      }else{
+        this.initResRoom() //初始resRoomInfo
+      }      
+    },
+    //根据index获取开始结束时间
+    getTimeFromIndex(index,type){
+      if(type) index = index+1
+      let hourTime = parseInt(index / 2)
+      let complement = index % 2
+      let minuteTime = complement == 1 ? "30":"00"
+      let time = hourTime + ":" + minuteTime
+      return time
+    },
+    //初始化预订信息
+    initResRoom(){
+      this.resRoomInfo.date = null
+      this.resRoomInfo.week = null
+      this.resRoomInfo.startTime = null
+      this.resRoomInfo.endTime = null
+      this.resRoomInfo.roomName = null
+      this.resRoomInfo.region = null
+      this.resRoomInfo.user = null
     },
     //初始化相关信息
     initState(){
       this.isMoving = false   //关闭滑动状态
-      this.triggerIndex = null //恢复初始值
       this.initGrid.startIndex = null
       this.initGrid.endIndex = null
     },
     //单行选择，清除其他行样式
     removeOtherLineCss(index){
-      this.roomLst.forEach((item,key)=>{
-        if(key != index){
+      this.roomLst.forEach((item,key)=>{        
           item.startSelectIndex = null
           item.endSelectIndex = null
           item.gridLst.forEach((grid,key) => {
             if(grid.status == 2) grid.status = 0
-          })
-        }
+          })      
       })
     },
     //获取markLine的位置信息
@@ -343,12 +424,16 @@ export default {
       this.dateLst[key].active = true
       this.hideMarkLine()
       this.getRoomLst()
+    },
+    getUserName(){
+      this.userName = getUserName().userName
     }
   },
   mounted(){
     this.getRoomLst() //获取会议室信息
     this.getDateLst() //获取日期列表
     this.getRegionName() //获取选中的地区名称
+    this.getUserName()
   },
   created(){}
 }
@@ -406,7 +491,7 @@ export default {
 }
 #roomRerservation{width:100%;border:1px solid @baseColor;background-color:#fff;}
 .roomTop{width:100%;height:70px;display:flex;}
-.roomTopSide{width:@roomTopSideW;border:@baseBorder;box-sizing:border-box;position:relative;
+.roomTopSide{width:@roomTopSideW;border:@baseBorder;box-sizing:border-box;position:relative;height:100%;
   &:before{content:"";position:absolute;left:15px;top:-15px;width:100%;height:50px;box-sizing:border-box;border-bottom:@baseBorder;transform-origin:center center;transform:rotateZ(30deg) scale(1.18);
   }
   .titleTime,.titleName{position:absolute;font-size:14px;color:@fontColor;}
@@ -434,7 +519,7 @@ export default {
 .roomMain{height:10*@gridH;display:flex;width:100%;overflow:hidden;}
 .roomLst{}
 .roomItem{height:@gridH;box-sizing:border-box;border-right: none;display:flex;
-  .roomName{width:@roomTopSideW + @barGridH;box-sizing: border-box;text-align:center;font-size:14px;height:@gridH;line-height:@gridH;font-weight: 400;border:@baseBorder;user-select:none;color:@fontColor;}
+  .roomName{width:@roomTopSideW + @barGridH;box-sizing: border-box;text-align:center;font-size:14px;height:@gridH;line-height:@gridH;font-weight: 400;border:@baseBorder;user-select:none;color:@fontColor;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;box-sizing:border-box;padding:0 10px;}
   .roomGridWrap{box-sizing:border-box;overflow:hidden;width:@sumW - @barGridH - 145px;
     .roomGridLst{white-space: nowrap;position:relative;transition:all 0.3s;position:relative;
       .markLeftLine,.markRightLine{width:2px;height:100%;background-color:@markLineColor;position:absolute;z-index:10;}

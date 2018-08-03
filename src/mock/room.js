@@ -3,7 +3,8 @@ function getRoomLst(){
  let roomLst = Mock.mock({
     "roomLst|10": [
       {
-        "name|+1": ['会议室0','会议室1','会议室2','会议室3','会议室4','会议室5','会议室6','会议室7','会议室8','会议室9'],
+        "id":'@id',
+        "name": '@name',
         "date":"@date('yyyy/MM/dd')",
         "resTimes|0-2":[
           {
