@@ -460,11 +460,11 @@ export default {
 </script>
 
 <style  scoped lang="less">
-@baseColor:#71c9ce;//基础色，比如border
+@baseColor:#71C9CE;//基础色，比如border
 @disabledColor:#c8c9cc; //not-allowd颜色
 @themeColor:@baseColor;//主题颜色
 @themeColor2:@baseColor;//日期选中颜色
-@hourColor:#cbf1f5;//时间滚条颜色
+@hourColor:fadeout(@themeColor,80%);//时间滚条颜色
 @markLineColor:#f38181;//markline颜色
 @barGridH:25px;
 @roomTopSideW:120px;
@@ -485,7 +485,7 @@ export default {
       .region{font-size:14px;padding:10px 15px;cursor: pointer;color:@fontColor;
         &:hover{color:@themeColor;}
       }
-      .region.active{background-color:rgba(113,201,206,.2);border-radius: 6px;color:@themeColor;font-weight:700;}
+      .region.active{background-color:fadeout(@themeColor,80%);border-radius: 6px;color:@themeColor;font-weight:700;}
     }
   }
 }
