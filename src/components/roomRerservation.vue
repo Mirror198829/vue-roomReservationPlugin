@@ -15,7 +15,7 @@
      <li class="conditionItem">
        <h3 class="conditionTitle">会议设施：</h3>
        <ul class="facility">
-           <el-checkbox-group v-model="facilityList" @change="getRoomLst()">
+           <el-checkbox-group v-model="facilityList" @change="getRoomLst();getPagination()">
             <el-checkbox label="视频"></el-checkbox>
             <el-checkbox label="投影"></el-checkbox>
             <el-checkbox label="白板"></el-checkbox>
@@ -79,6 +79,14 @@
         <div class="noneBox"></div>
       </div>
     </div>
+    <div id="roomResPag">
+      <el-pagination
+        @current-change="getRoomLst()"
+        :current-page="pagination.currentPage"
+        layout="total,  prev, pager, next, jumper"
+        :total="pagination.total">
+      </el-pagination>
+    </div>
   </div>
   <div id="resRoomInfo">
     <h1>会议室预订信息：</h1>
@@ -116,6 +124,7 @@
 <script>
 import getRoomLst from '../mock/room.js'
 import getUserName from '../mock/getUserName.js'
+import getPagination from '../mock/pagination.js'
 export default {
   name: 'roomRerservation',
   data () {
@@ -147,7 +156,11 @@ export default {
         roomName:null,
         user:null
       },
-      userName:null
+      userName:null,
+      pagination:{
+        total:0,
+        currentPage:0
+      }
     }
   },
   methods:{
@@ -160,6 +173,7 @@ export default {
       this.getRoomLst()
       this.getRegionName()
       this.moveStep = 3
+      this.getPagination()
     },
     //根据地域的激活状态获插件的地域名称
     getRegionName(){
@@ -423,10 +437,15 @@ export default {
       })
       this.dateLst[key].active = true
       this.hideMarkLine()
-      this.getRoomLst()
+      this.getPagination()
     },
     getUserName(){
       this.userName = getUserName().userName
+    },
+    getPagination(){
+      let pagination = getPagination() 
+      this.pagination.total = pagination.total
+      this.pagination.currentPage = pagination.currentPage
     }
   },
   mounted(){
@@ -434,6 +453,7 @@ export default {
     this.getDateLst() //获取日期列表
     this.getRegionName() //获取选中的地区名称
     this.getUserName()
+    this.getPagination()
   },
   created(){}
 }
@@ -501,8 +521,9 @@ export default {
 .roomTopTime{flex:1;height:100%}
 .roomDate{height:calc(100% - @barGridH);display: flex;background-color:#fff;
   .dateItem{flex:1;font-size:13px;text-align: center;box-sizing: border-box;border:@baseBorder;height:100%;display:flex;align-items: center;justify-content: center;cursor: pointer;color:@fontColor;}
-  .dateItem.active{background-color:@themeColor2;color:#fff}
+  .dateItem.active{background-color:@themeColor2;color:#fff;}
 }
+#roomResPag{display:flex;justify-content:flex-end;padding:15px 0;}
 .arrowHourWrap{width:100%;display:flex;height:@barGridH;
   .arrow{width:@barGridH;height:100%;box-sizing:border-box;border:@baseBorder;font-size:22px;text-align:center;position: relative;cursor:pointer;}
   .arrow.disabled{color:@disabledColor;cursor:not-allowed;}
