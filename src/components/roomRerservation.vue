@@ -407,22 +407,13 @@ export default {
 #roomRerservation{width:100%;border:1px solid @baseColor;background-color:#fff;}
 .roomTop{width:100%;height:70px;display:flex;}
 .roomTopSide{width:@roomTopSideW;border:@baseBorder;box-sizing:border-box;position:relative;
-  &:before{content:"";
-  position:absolute;
-  left:15px;
-  top:-15px;
-  width:100%;
-  height:50px;
-  box-sizing:border-box;
-  border-bottom:@baseBorder;
-  transform-origin:center center;
-  transform:rotateZ(30deg) scale(1.18);
+  &:before{content:"";position:absolute;left:15px;top:-15px;width:100%;height:50px;box-sizing:border-box;border-bottom:@baseBorder;transform-origin:center center;transform:rotateZ(30deg) scale(1.18);
   }
   .titleTime,.titleName{position:absolute;font-size:14px;color:@fontColor;}
   .titleTime{top:13px;right:20px;}
   .titleName{bottom:15px;left:20px}
 }
-.roomTopTime{flex:1;}
+.roomTopTime{flex:1;height:100%}
 .roomDate{height:calc(100% - @barGridH);display: flex;background-color:#fff;
   .dateItem{flex:1;font-size:13px;text-align: center;box-sizing: border-box;border:@baseBorder;height:100%;display:flex;align-items: center;justify-content: center;cursor: pointer;color:@fontColor;}
   .dateItem.active{background-color:@themeColor2;color:#fff}
