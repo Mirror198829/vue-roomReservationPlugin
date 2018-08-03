@@ -115,7 +115,7 @@
       </li>
     </ul>
   </div>
-  <div style="text-align:center;">
+  <div id="resBtnWrap">
     <el-button type="primary">确定预订</el-button>
   </div>
 </div>
@@ -436,8 +436,8 @@ export default {
         item.active = false
       })
       this.dateLst[key].active = true
+      this.getRoomLst()
       this.hideMarkLine()
-      this.getPagination()
     },
     getUserName(){
       this.userName = getUserName().userName
@@ -555,6 +555,7 @@ export default {
 
   }
 }
+#resBtnWrap{text-align:center;padding:20px 0}
 .noneBox{width:@barGridH;border:@baseBorder;box-sizing:border-box}
 // screen >= 1200
 @media screen and (min-width:1200px){
