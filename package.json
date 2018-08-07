@@ -1,6 +1,6 @@
 {
   "name": "vue-room-res",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "description": "A Vue.js project",
   "author": "'Mirror198829' <'412366756@qq.com'>",
   "private": false,
@@ -10,7 +10,7 @@
     "start": "npm run dev",
     "build": "node build/build.js"
   },
-  "homepage":"https://github.com/Mirror198829/vue-roomReservationPlugin",
+  "homepage": "https://github.com/Mirror198829/vue-roomReservationPlugin",
   "dependencies": {
     "vue": "^2.5.2",
     "vue-router": "^3.0.1"
