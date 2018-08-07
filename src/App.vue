@@ -1,12 +1,17 @@
 <template>
   <div id="app">
-    <router-view/>
+<!--     <router-view/> -->
+	<res-room></res-room>
   </div>
 </template>
 
 <script>
+import resRoom from './components/roomRerservation.vue'
 export default {
-  name: 'App'
+  name: 'App',
+  components:{
+  	resRoom
+  }
 }
 </script>
 

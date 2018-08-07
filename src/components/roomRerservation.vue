@@ -4,119 +4,122 @@
 - github:https://github.com/Mirror198829
 -->
 <template>
-<div id="roomReserveMain">
-  <div class="conditionBox">
-     <li class="conditionItem">
-       <h3 class="conditionTitle">区域选择：</h3>
-       <ul class="regionLst">
-         <li class="region" v-for="(item,key) in regionLst" :class="{'active':item.status}" @click="selectRegionCondition(key)">{{item.name}}</li>
-       </ul>
-     </li>
-     <li class="conditionItem">
-       <h3 class="conditionTitle">会议设施：</h3>
-       <ul class="facility">
-           <el-checkbox-group v-model="facilityList" @change="getRoomLst();getPagination()">
-            <el-checkbox label="视频"></el-checkbox>
-            <el-checkbox label="投影"></el-checkbox>
-            <el-checkbox label="白板"></el-checkbox>
-            <el-checkbox label="麦克"></el-checkbox>
-            <el-checkbox label="电视"></el-checkbox>
-          </el-checkbox-group>
-       </ul>
-     </li>
-  </div>
-  <div id="resRoomPluginBox">
-    <div class="resHead">
-      <h2 class="resHeadRegionName">【南京】 会议室（ {{regionName}} ）</h2>
-      <div class="identifyLst">
-        <li class="identify" v-for="(item,key) in identifyLst">
-          <i :class="{'nooccupy':key ==1,'select':key == 2}"></i><span>{{item}}</span>
-        </li>
-      </div>
+<div class="resRoomWrap">
+  <h1 class="resRoomTitle">会议室YUDING</h1>
+  <div id="roomReserveMain">  
+    <div class="conditionBox">
+       <li class="conditionItem">
+         <h3 class="conditionTitle">区域选择：</h3>
+         <ul class="regionLst">
+           <li class="region" v-for="(item,key) in regionLst" :class="{'active':item.status}" @click="selectRegionCondition(key)">{{item.name}}</li>
+         </ul>
+       </li>
+       <li class="conditionItem">
+         <h3 class="conditionTitle">会议设施：</h3>
+         <ul class="facility">
+             <el-checkbox-group v-model="facilityList" @change="getRoomLst();getPagination()">
+              <el-checkbox label="视频"></el-checkbox>
+              <el-checkbox label="投影"></el-checkbox>
+              <el-checkbox label="白板"></el-checkbox>
+              <el-checkbox label="麦克"></el-checkbox>
+              <el-checkbox label="电视"></el-checkbox>
+            </el-checkbox-group>
+         </ul>
+       </li>
     </div>
-    <div id="roomRerservation">
-      <div class="roomTop">
-        <div class="roomTopSide">
-          <span class="titleTime">时间</span>
-          <span class="titleName">名称</span>
+    <div id="resRoomPluginBox">
+      <div class="resHead">
+        <h2 class="resHeadRegionName">【南京】 会议室（ {{regionName}} ）</h2>
+        <div class="identifyLst">
+          <li class="identify" v-for="(item,key) in identifyLst">
+            <i :class="{'nooccupy':key ==1,'select':key == 2}"></i><span>{{item}}</span>
+          </li>
         </div>
-        <div class="roomTopTime">
-          <ul class="roomDate">
-            <li class="dateItem" v-for="(date,key) in dateLst" :class="{'active':date.active}" @click="changeDate(key)"><span>{{date.week}}<br/>{{date.date}}</span></li>
-          </ul>
-          <div class="arrowHourWrap">
-            <i class="arrow arrowLeft fa fa-caret-left" :class="{'disabled': moveStep == 1}"  @click = "moveHour(true)"></i>
-            <div class="roomTopHour">
-              <ul class="hourNavLst" :class="{'stepOne':moveStep == 1,'stepTwo':moveStep == 2,'stepThree':moveStep == 3,'stepFour':moveStep == 4}">
-                <li class="hourNavItem" v-for="(item,index) in 24">{{index}}:00</li>
-              </ul>
+      </div>
+      <div id="roomRerservation">
+        <div class="roomTop">
+          <div class="roomTopSide">
+            <span class="titleTime">时间</span>
+            <span class="titleName">名称</span>
+          </div>
+          <div class="roomTopTime">
+            <ul class="roomDate">
+              <li class="dateItem" v-for="(date,key) in dateLst" :class="{'active':date.active}" @click="changeDate(key)"><span>{{date.week}}<br/>{{date.date}}</span></li>
+            </ul>
+            <div class="arrowHourWrap">
+              <i class="arrow arrowLeft fa fa-caret-left" :class="{'disabled': moveStep == 1}"  @click = "moveHour(true)"></i>
+              <div class="roomTopHour">
+                <ul class="hourNavLst" :class="{'stepOne':moveStep == 1,'stepTwo':moveStep == 2,'stepThree':moveStep == 3,'stepFour':moveStep == 4}">
+                  <li class="hourNavItem" v-for="(item,index) in 24">{{index}}:00</li>
+                </ul>
+              </div>
+              <i class="arrow arrowRight  fa fa-caret-right" :class="{'disabled': moveStep == 4}" @click = "moveHour(false)"></i>
             </div>
-            <i class="arrow arrowRight  fa fa-caret-right" :class="{'disabled': moveStep == 4}" @click = "moveHour(false)"></i>
           </div>
         </div>
+        <div class="roomMain">
+          <ul class="roomLst">
+            <li class="roomItem"  v-for="(item,key) in roomLst">
+              <h3 class="roomName" :title="item.name">{{item.name}}</h3>
+              <div class="roomGridWrap">
+                <ul class="roomGridLst"  
+                :class="{'stepOne':moveStep == 1,'stepTwo':moveStep == 2,'stepThree':moveStep == 3,'stepFour':moveStep == 4}"
+                >
+                  <div v-if="markLine.isShow" class="markLeftLine" :style="{'left':markLine.leftLine+'px'}"></div>
+                  <div v-if="markLine.isShow" class="markRightLine" :style="{'left':markLine.rightLine+'px'}"></div>
+                  <li class="roomGrid" 
+                      v-for="(grid,index) in item.gridLst" 
+                      :class="{'isOccupy':grid.status == 1,'isSelect':grid.status == 2}"
+                      @mousedown="mouseDownGrid(key,index,$event)"
+                      @mouseup = 'mouseUpGrid(key,index,$event)'
+                      @mouseover = 'mouseOverGrid(key,index)'
+                  ></li>
+                </ul>
+              </div>
+            </li>
+          </ul>
+          <div class="noneBox"></div>
+        </div>
       </div>
-      <div class="roomMain">
-        <ul class="roomLst">
-          <li class="roomItem"  v-for="(item,key) in roomLst">
-            <h3 class="roomName" :title="item.name">{{item.name}}</h3>
-            <div class="roomGridWrap">
-              <ul class="roomGridLst"  
-              :class="{'stepOne':moveStep == 1,'stepTwo':moveStep == 2,'stepThree':moveStep == 3,'stepFour':moveStep == 4}"
-              >
-                <div v-if="markLine.isShow" class="markLeftLine" :style="{'left':markLine.leftLine+'px'}"></div>
-                <div v-if="markLine.isShow" class="markRightLine" :style="{'left':markLine.rightLine+'px'}"></div>
-                <li class="roomGrid" 
-                    v-for="(grid,index) in item.gridLst" 
-                    :class="{'isOccupy':grid.status == 1,'isSelect':grid.status == 2}"
-                    @mousedown="mouseDownGrid(key,index,$event)"
-                    @mouseup = 'mouseUpGrid(key,index,$event)'
-                    @mouseover = 'mouseOverGrid(key,index)'
-                ></li>
-              </ul>
-            </div>
-          </li>
-        </ul>
-        <div class="noneBox"></div>
+      <div id="roomResPag">
+        <el-pagination
+          @current-change="getRoomLst()"
+          :current-page="pagination.currentPage"
+          layout="total,  prev, pager, next, jumper"
+          :total="pagination.total">
+        </el-pagination>
       </div>
     </div>
-    <div id="roomResPag">
-      <el-pagination
-        @current-change="getRoomLst()"
-        :current-page="pagination.currentPage"
-        layout="total,  prev, pager, next, jumper"
-        :total="pagination.total">
-      </el-pagination>
+    <div id="resRoomInfo">
+      <h1>会议室预订信息：</h1>
+      <ul>
+        <li class="resRoomInfoItem">
+          <span class="resRoomInfoItemTitle">会议室区域：</span>
+          {{resRoomInfo.region}}
+        </li>
+        <li class="resRoomInfoItem">
+          <span class="resRoomInfoItemTitle">会议室名称：</span>
+          {{resRoomInfo.roomName}}
+        </li>
+        <li class="resRoomInfoItem">
+          <span class="resRoomInfoItemTitle">预 订 时 间：</span>
+          {{resRoomInfo.date}}
+          <span v-if="resRoomInfo.week">（</span>
+          {{resRoomInfo.week}}
+          <span v-if="resRoomInfo.week">）</span> 
+          {{resRoomInfo.startTime}}
+          <span v-if="resRoomInfo.startTime">——</span>
+          {{resRoomInfo.endTime}}
+        </li>
+        <li class="resRoomInfoItem">
+          <span class="resRoomInfoItemTitle">预订人姓名：</span>
+          {{resRoomInfo.user}}
+        </li>
+      </ul>
     </div>
-  </div>
-  <div id="resRoomInfo">
-    <h1>会议室预订信息：</h1>
-    <ul>
-      <li class="resRoomInfoItem">
-        <span class="resRoomInfoItemTitle">会议室区域：</span>
-        {{resRoomInfo.region}}
-      </li>
-      <li class="resRoomInfoItem">
-        <span class="resRoomInfoItemTitle">会议室名称：</span>
-        {{resRoomInfo.roomName}}
-      </li>
-      <li class="resRoomInfoItem">
-        <span class="resRoomInfoItemTitle">预 订 时 间：</span>
-        {{resRoomInfo.date}}
-        <span v-if="resRoomInfo.week">（</span>
-        {{resRoomInfo.week}}
-        <span v-if="resRoomInfo.week">）</span> 
-        {{resRoomInfo.startTime}}
-        <span v-if="resRoomInfo.startTime">——</span>
-        {{resRoomInfo.endTime}}
-      </li>
-      <li class="resRoomInfoItem">
-        <span class="resRoomInfoItemTitle">预订人姓名：</span>
-        {{resRoomInfo.user}}
-      </li>
-    </ul>
-  </div>
-  <div id="resBtnWrap">
-    <el-button type="primary">确定预订</el-button>
+    <div id="resBtnWrap">
+      <el-button type="primary">确定预订</el-button>
+    </div>
   </div>
 </div>
 </template>
@@ -125,8 +128,14 @@
 import getRoomLst from '../mock/room.js'
 import getUserName from '../mock/getUserName.js'
 import getPagination from '../mock/pagination.js'
+import moment from 'moment'
+import Vue from 'vue'
+import ElementUI from 'element-ui'
+import 'font-awesome/css/font-awesome.css'
+import 'element-ui/lib/theme-chalk/index.css'
+Vue.use(ElementUI)
 export default {
-  name: 'roomRerservation',
+  name: 'roomResPlug',
   data () {
     return {
       facilityList:[],//设施列表
@@ -419,9 +428,9 @@ export default {
     getDateLst(){
       for(let i = 0; i < 7; i++){
         let active = false
-        let date = this.$moment().add(i,'days').format('YYYY/MM/DD')
+        let date = moment().add(i,'days').format('YYYY/MM/DD')
         let weekLst = new Array("日", "一", "二", "三", "四", "五", "六")
-        let dateLocal = this.$moment().add(i,'days')
+        let dateLocal = moment().add(i,'days')
         let week = '星期'+weekLst[dateLocal._d.getDay()]
         if(i == 0) active = true
         this.dateLst.push({
@@ -475,7 +484,9 @@ export default {
 @baseBorder:1px solid @baseColor;
 @fontColor:#606266;
 *{user-select:none}
-#roomReserveMain{width:@sumW;min-width:@sumW;margin:0 auto}
+.resRoomWrap{width:1000px;margin:30px auto;min-height: 100%;box-sizing: border-box;background-color: #fff;}
+.resRoomTitle{font-size:16px;font-weight: 400;padding:14px 20px;border-bottom:2px solid #f6f6f6;}
+#roomReserveMain{width:@sumW;min-width:@sumW;margin:0 auto;}
 // 删选条件样式
 .conditionBox{margin-top:25px;margin-bottom:40px;
   .conditionItem{display:flex;
