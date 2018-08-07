@@ -1,15 +1,15 @@
 <template>
   <div class="resRoomWrap">    
-    <room-rerservation></room-rerservation>
+    <room-res-plug></room-res-plug>
   </div>
 </template>
 
 <script>
-import roomRerservation from './roomRerservation.vue'
+import roomResPlug from './roomRerservation.vue'
 export default {
-  name: 'HelloWorld',
+  name: 'homePage',
   components:{
-    roomRerservation
+    roomResPlug
   },
   data () {
     return {

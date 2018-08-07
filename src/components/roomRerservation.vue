@@ -1,6 +1,6 @@
 <!-- 
 - Author:CaoJing
-- Date:2018/8/3
+- Date:2018/8/7
 - github:https://github.com/Mirror198829
 -->
 <template>
@@ -469,12 +469,12 @@ export default {
 </script>
 
 <style  scoped lang="less">
-@baseColor:#71C9CE;//基础色，比如border
+@baseColor:#ba78cd;//基础色，比如border
 @disabledColor:#c8c9cc; //not-allowd颜色
 @themeColor:@baseColor;//主题颜色
 @themeColor2:@baseColor;//日期选中颜色
 @hourColor:fadeout(@themeColor,80%);//时间滚条颜色
-@markLineColor:#f38181;//markline颜色
+@markLineColor:#f76262;//markline颜色
 @barGridH:25px;
 @roomTopSideW:120px;
 @sumW:900px;
