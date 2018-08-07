@@ -1,10 +1,10 @@
 {
   "name": "vue-room-res",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "A Vue.js project",
   "author": "'Mirror198829' <'412366756@qq.com'>",
   "private": false,
-  "main":"dist/room-res.min.js",
+  "main": "dist/room-res.min.js",
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
