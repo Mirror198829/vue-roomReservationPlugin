@@ -5,7 +5,7 @@
 -->
 <template>
 <div class="resRoomWrap">
-  <h1 class="resRoomTitle">会议室预订123</h1>
+  <h1 class="resRoomTitle">会议室预订123333</h1>
   <div id="roomReserveMain">  
     <div class="conditionBox">
        <li class="conditionItem">
