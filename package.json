@@ -11,6 +11,14 @@
     "build": "node build/build.js"
   },
   "homepage": "https://github.com/Mirror198829/vue-roomReservationPlugin",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Mirror198829/vue-roomReservationPlugin.git"
+  }, 
+  "keywords": [
+   "vue",
+   "roomReservation"
+  ], 
   "dependencies": {
     "vue": "^2.5.2",
     "vue-router": "^3.0.1"
