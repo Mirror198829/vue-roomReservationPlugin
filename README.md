@@ -1,5 +1,4 @@
 # vue-roomReservationPlugin
-会议室预订插件
 ![avatar](https://mirror198829.github.io/static/github/resRoom.png)
 ## 技术栈
 vue+element-ui+momentjs+mockjs+less
