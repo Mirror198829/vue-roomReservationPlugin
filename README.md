@@ -54,8 +54,4 @@ Mock.mock({
     ]
 })
 ```
-## 预订方式
-### 滑动模块预定
-### 点击模块预订
-
-## 功能
+#### 请注明代码来源：https://github.com/Mirror198829/vue-roomReservationPlugin
