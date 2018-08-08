@@ -314,7 +314,6 @@ export default {
     getResRoomInfo(){
       let triggerIndex = this.triggerIndex
       if(triggerIndex == null) {
-        alert(1233243)
         return false
       }
       let triggerRoom = this.roomLst[triggerIndex]
@@ -394,14 +393,20 @@ export default {
     //获取会议室列表
     getRoomLst(){
       this.roomLst = getRoomLst().roomLst 
+      console.log(JSON.stringify(this.roomLst))
       this.handleRoomLst() //对数据进行处理
       this.hideMarkLine()
     },
     //修改会议室列表的数据格式
-    handleRoomLst(){
+    handleRoomLst(){    
       this.roomLst.forEach((room,index) => {
+        let gridLst = []
+          for(let i=0; i<48;i++){
+            gridLst.push({status:0})
+        }
         room.startSelectIndex = null
         room.endSelectIndex = null
+        room.gridLst = gridLst
         let resTimes = room.resTimes
         resTimes.forEach((time,key) => {
           let startTime = time.startTime
@@ -469,7 +474,7 @@ export default {
 </script>
 
 <style  scoped lang="less">
-@baseColor:#ba78cd;//基础色，比如border
+@baseColor:#66b1ff;//基础色，比如border
 @disabledColor:#c8c9cc; //not-allowd颜色
 @themeColor:@baseColor;//主题颜色
 @themeColor2:@baseColor;//日期选中颜色
