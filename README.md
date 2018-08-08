@@ -1,7 +1,7 @@
 # vue-roomReservationPlugin
 会议室预订插件
 ## 技术栈
-vue+element-ui+momentjs+mockjs
+vue+element-ui+momentjs+mockjs+less
 ## 数据格式
 ``` javascript
 roomData:[
