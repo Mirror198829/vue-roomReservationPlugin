@@ -8,7 +8,7 @@
  npm install 
  npm run dev
 ```
-## NPM(vue-res-room)使用
+## NPM(vue-res-room plugin)使用
 `npm install vue-res-room --save-dev`
 个人项目 main.js:
 ``` javascript
@@ -24,18 +24,24 @@ Vue.use(RoomRes)
 </div>
 ```
 ## 数据格式
+会议室预订表格的数据格式如下：
 ``` javascript
-roomData:[
-  {name:'会议室',startTime:'11:00',endTime:'24:00'}
-]
-```
-自动转换成格式
-``` javascript
-roomData:[
-  {name:'会议室',hours:[
-    {status: 0|1|2,index:0+,startHour:index + ':30',endHour: 'index+1'}
-  ]}
-]
+Mock.mock({
+    "roomLst|10": [
+      {
+        "id":'@id',
+        "name": '@name',
+        "date":"@date('yyyy/MM/dd')",
+        "resTimes|0-2":[
+          {
+            "startTime|+1":["8:00",'13:30','16:00'],
+            "endTime|+1":["10:30",'15:00','18:30'],
+            "resUser":"@cname"
+          }
+        ]
+      }
+    ]
+})
 ```
 ## 预订方式
 ### 滑动模块预定
