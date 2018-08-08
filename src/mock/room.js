@@ -12,11 +12,6 @@ function getRoomLst(){
             "endTime|+1":["10:30",'15:00','18:30'],
             "resUser":"@cname"
           }
-        ],
-        "gridLst|48":[
-          {
-            "status":0
-          }
         ]
       }
     ]
