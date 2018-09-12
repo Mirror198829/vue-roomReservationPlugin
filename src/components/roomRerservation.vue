@@ -393,7 +393,6 @@ export default {
     //获取会议室列表
     getRoomLst(){
       this.roomLst = getRoomLst().roomLst 
-      console.log(JSON.stringify(this.roomLst))
       this.handleRoomLst() //对数据进行处理
       this.hideMarkLine()
     },
