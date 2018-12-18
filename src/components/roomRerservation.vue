@@ -1,8 +1,10 @@
-<!-- 
-- Author:CaoJing
-- Date:2018/8/7
-- github:https://github.com/Mirror198829
--->
+<!--
+ * @Author: caojing
+ * @Date: 2018-08-08 15:33:12
+ * @LastEditors: caojing
+ * @LastEditTime: 2018-12-18 19:12:41
+ * @Description: 会议室预订系统
+ -->
 <template>
 <div class="resRoomWrap">
   <h1 class="resRoomTitle">会议室预订</h1>
@@ -11,7 +13,12 @@
        <li class="conditionItem">
          <h3 class="conditionTitle">区域选择：</h3>
          <ul class="regionLst">
-           <li class="region" v-for="(item,key) in regionLst" :class="{'active':item.status}" @click="selectRegionCondition(key)">{{item.name}}</li>
+           <li 
+           class="region" 
+           :key="key"
+           v-for="(item,key) in regionLst" 
+           :class="{'active':item.status}" 
+           @click="selectRegionCondition(key)">{{item.name}}</li>
          </ul>
        </li>
        <li class="conditionItem">
@@ -31,7 +38,10 @@
       <div class="resHead">
         <h2 class="resHeadRegionName">【南京】 会议室（ {{regionName}} ）</h2>
         <div class="identifyLst">
-          <li class="identify" v-for="(item,key) in identifyLst">
+          <li 
+            class="identify" 
+            v-for="(item,key) in identifyLst"
+            :key="key">
             <i :class="{'nooccupy':key ==1,'select':key == 2}"></i><span>{{item}}</span>
           </li>
         </div>
@@ -44,13 +54,21 @@
           </div>
           <div class="roomTopTime">
             <ul class="roomDate">
-              <li class="dateItem" v-for="(date,key) in dateLst" :class="{'active':date.active}" @click="changeDate(key)"><span>{{date.week}}<br/>{{date.date}}</span></li>
+              <li 
+                :key="key"
+                class="dateItem" 
+                v-for="(date,key) in dateLst" 
+                :class="{'active':date.active}" 
+                @click="changeDate(key)"><span>{{date.week}}<br/>{{date.date}}</span></li>
             </ul>
             <div class="arrowHourWrap">
               <i class="arrow arrowLeft fa fa-caret-left" :class="{'disabled': moveStep == 1}"  @click = "moveHour(true)"></i>
               <div class="roomTopHour">
                 <ul class="hourNavLst" :class="{'stepOne':moveStep == 1,'stepTwo':moveStep == 2,'stepThree':moveStep == 3,'stepFour':moveStep == 4}">
-                  <li class="hourNavItem" v-for="(item,index) in 24">{{index}}:00</li>
+                  <li 
+                    class="hourNavItem"
+                    :key="index" 
+                    v-for="(item,index) in 24">{{index}}:00</li>
                 </ul>
               </div>
               <i class="arrow arrowRight  fa fa-caret-right" :class="{'disabled': moveStep == 4}" @click = "moveHour(false)"></i>
@@ -59,7 +77,10 @@
         </div>
         <div class="roomMain">
           <ul class="roomLst">
-            <li class="roomItem"  v-for="(item,key) in roomLst">
+            <li 
+              class="roomItem" 
+              :key="key" 
+              v-for="(item,key) in roomLst">
               <h3 class="roomName" :title="item.name">{{item.name}}</h3>
               <div class="roomGridWrap">
                 <ul class="roomGridLst"  
@@ -69,6 +90,7 @@
                   <div v-if="markLine.isShow" class="markRightLine" :style="{'left':markLine.rightLine+'px'}"></div>
                   <li class="roomGrid" 
                       v-for="(grid,index) in item.gridLst" 
+                      :key="index"
                       :class="{'isOccupy':grid.status == 1,'isSelect':grid.status == 2}"
                       @mousedown="mouseDownGrid(key,index,$event)"
                       @mouseup = 'mouseUpGrid(key,index,$event)'
@@ -553,7 +575,6 @@ export default {
   }
 }
 .roomMain{height:10*@gridH;display:flex;width:100%;overflow:hidden;}
-.roomLst{}
 .roomItem{height:@gridH;box-sizing:border-box;border-right: none;display:flex;
   .roomName{width:@roomTopSideW + @barGridH;box-sizing: border-box;text-align:center;font-size:14px;height:@gridH;line-height:@gridH;font-weight: 400;border:@baseBorder;user-select:none;color:@fontColor;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;box-sizing:border-box;padding:0 10px;}
   .roomGridWrap{box-sizing:border-box;overflow:hidden;width:@sumW - @barGridH - 145px;
