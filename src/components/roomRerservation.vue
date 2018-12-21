@@ -2,7 +2,7 @@
  * @Author: caojing
  * @Date: 2018-08-08 15:33:12
  * @LastEditors: caojing
- * @LastEditTime: 2018-12-21 17:13:03
+ * @LastEditTime: 2018-12-21 17:22:32
  * @Description: 会议室预订系统
  -->
 <template>
@@ -69,11 +69,6 @@
       return {
         regionName: null,
         roomLst:[],
-        markLine: {
-          isShow: false,
-          leftLine: 0,
-          rightLine: 0
-        },
         resRoomInfo: {
           region: null,
           date: null,
