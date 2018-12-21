@@ -2,7 +2,7 @@
  * @Author: caojing
  * @Date: 2018-12-21 14:29:09
  * @LastEditors: caojing
- * @LastEditTime: 2018-12-21 17:13:58
+ * @LastEditTime: 2018-12-21 17:26:53
  * @Description: vHeader组件
  -->
 <template>
@@ -48,7 +48,7 @@ export default {
     .headerMain{
         width:@centerW;
         text-align:left;
-        font-size:18px;
+        font-size:16px;
         color:@themeColor;
     }
 }
