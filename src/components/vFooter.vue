@@ -2,7 +2,7 @@
  * @Author: caojing
  * @Date: 2018-12-21 14:36:23
  * @LastEditors: caojing
- * @LastEditTime: 2018-12-21 14:45:58
+ * @LastEditTime: 2018-12-21 15:59:04
  * @Description: vFooter component
  -->
 <template>
@@ -39,10 +39,18 @@ export default {
 <style lang="less" scoped>
 footer{
     background:#fff;
-    height:70px;
+    padding:20px 0;
     display:flex;
     flex-direction:column;
     justify-content: center;
     align-items:center;
+    box-shadow:3px 1px 0px rgba(26, 26, 26, 0.1);
+    a{
+        color:@fontColor;
+        font-size:14px;
+        &:first-child{
+            margin-bottom:5px;
+        }
+    }
 }
 </style>

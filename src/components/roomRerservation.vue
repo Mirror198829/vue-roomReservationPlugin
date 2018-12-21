@@ -2,13 +2,12 @@
  * @Author: caojing
  * @Date: 2018-08-08 15:33:12
  * @LastEditors: caojing
- * @LastEditTime: 2018-12-18 19:12:41
+ * @LastEditTime: 2018-12-21 16:06:37
  * @Description: 会议室预订系统
  -->
 <template>
 <div class="resRoomWrap">
-  <h1 class="resRoomTitle">会议室预订</h1>
-  <div id="roomReserveMain">  
+  <div class="roomReserveMain">  
     <div class="conditionBox">
        <li class="conditionItem">
          <h3 class="conditionTitle">区域选择：</h3>
@@ -495,10 +494,7 @@ export default {
 </script>
 
 <style  scoped lang="less">
-@baseColor:#66b1ff;//基础色，比如border
 @disabledColor:#c8c9cc; //not-allowd颜色
-@themeColor:@baseColor;//主题颜色
-@themeColor2:@baseColor;//日期选中颜色
 @hourColor:fadeout(@themeColor,80%);//时间滚条颜色
 @markLineColor:#f76262;//markline颜色
 @barGridH:25px;
@@ -508,13 +504,11 @@ export default {
 @gridW:(@topRightW - @barGridH - @barGridH) / 24;
 @gridH:@gridW;
 @baseBorder:1px solid @baseColor;
-@fontColor:#606266;
-*{user-select:none}
-.resRoomWrap{width:1000px;margin:30px auto;min-height: 100%;box-sizing: border-box;background-color: #fff;}
-.resRoomTitle{font-size:16px;font-weight: 400;padding:14px 20px;border-bottom:2px solid #f6f6f6;}
-#roomReserveMain{width:@sumW;min-width:@sumW;margin:0 auto;}
+// *{user-select:none}
+.resRoomWrap{width:@centerW;margin:20px auto;background-color: #fff;padding:20px 0;}
+.roomReserveMain{width:@sumW;min-width:@sumW;margin:0 auto;}
 // 删选条件样式
-.conditionBox{margin-top:25px;margin-bottom:40px;
+.conditionBox{margin-bottom:40px;
   .conditionItem{display:flex;
     .conditionTitle{font-size:14px;padding:10px 0;width:90px;color:@fontColor;}
     .facility{padding-top:10px;}
