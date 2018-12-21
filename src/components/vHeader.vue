@@ -2,7 +2,7 @@
  * @Author: caojing
  * @Date: 2018-12-21 14:29:09
  * @LastEditors: caojing
- * @LastEditTime: 2018-12-21 15:58:39
+ * @LastEditTime: 2018-12-21 17:13:58
  * @Description: vHeader组件
  -->
 <template>
@@ -50,7 +50,6 @@ export default {
         text-align:left;
         font-size:18px;
         color:@themeColor;
-        font-weight:700;
     }
 }
 </style>

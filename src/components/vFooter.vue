@@ -2,13 +2,13 @@
  * @Author: caojing
  * @Date: 2018-12-21 14:36:23
  * @LastEditors: caojing
- * @LastEditTime: 2018-12-21 15:59:04
+ * @LastEditTime: 2018-12-21 17:14:36
  * @Description: vFooter component
  -->
 <template>
     <footer>
-        <a href="https://github.com/Mirror198829/vue-roomReservationPlugin/tree/master" target="blank">江苏南京 前端开发工程师 曹静</a>
-        <a href="https://github.com/Mirror198829/vue-roomReservationPlugin/tree/master" target="blank">Github:https://github.com/Mirror198829/vue-roomReservationPlugin/tree/master</a>
+        <a href="https://github.com/Mirror198829" target="blank">江苏南京 前端开发工程师 曹静</a>
+        <a href="https://github.com/Mirror198829" target="blank">Github: https://github.com/Mirror198829</a>
     </footer>
 </template>
 
