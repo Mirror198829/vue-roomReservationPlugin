@@ -2,7 +2,7 @@
  * @Author: caojing
  * @Date: 2018-12-21 16:31:36
  * @LastEditors: caojing
- * @LastEditTime: 2018-12-21 17:11:14
+ * @LastEditTime: 2018-12-25 16:27:54
  * @Description: vRoomPlugin important code
  -->
 <template>
@@ -58,6 +58,7 @@
 
 <script>
   import moment from 'moment'
+  import getUserName from '../mock/getUserName.js'
   export default {
     name: 'vRoomPlugin',
     data() {
@@ -236,7 +237,7 @@
           this.resRoomInfo.roomName = roomName
           this.resRoomInfo.startTime = this.getTimeFromIndex(startSelectIndex, 0)
           this.resRoomInfo.endTime = this.getTimeFromIndex(endSelectIndex, 1)
-          this.resRoomInfo.user = this.userName
+          this.resRoomInfo.user = getUserName().userName
           this.dateLst.forEach((item, key) => {
             if (item.active) {
               this.resRoomInfo.week = item.week
@@ -246,6 +247,7 @@
         } else {
           this.initResRoom() //初始resRoomInfo
         }
+        this.$emit('getResInfo',this.resRoomInfo)
       },
       //根据index获取开始结束时间
       getTimeFromIndex(index, type) {
@@ -305,7 +307,6 @@
       getRoomLst() {
         //this.roomLst = getRoomLst().roomLst
         this.$emit('click')
-
       },
       //修改会议室列表的数据格式
       handleRoomLst() {
